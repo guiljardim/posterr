@@ -23,4 +23,8 @@ interface PostDao {
 
     @Query("SELECT * FROM posts WHERE id = :postId")
     suspend fun getPostById(postId: String): PostEntity?
+
+    @Query("SELECT * FROM posts WHERE authorId = :userId ORDER BY createdAt DESC")
+    suspend fun getPostsByUser(userId: String): List<PostEntity>
+
 }

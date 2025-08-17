@@ -15,5 +15,5 @@ interface PostRepository {
 
     suspend fun canCreatePostToday(userId: String): Boolean
     suspend fun getPostsCountToday(userId: String): Int
-    
+    suspend fun getPostsByUser(userId: String): List<Post>
 }

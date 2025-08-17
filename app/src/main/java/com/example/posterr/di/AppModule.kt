@@ -5,6 +5,7 @@ import com.example.posterr.data.PosterrDatabase
 import com.example.posterr.data.dao.DailyPostCountDao
 import com.example.posterr.data.dao.PostDao
 import com.example.posterr.data.dao.UserDao
+import com.example.posterr.data.dao.UserStatsDao
 import com.example.posterr.data.datasource.LocalPostDataSource
 import com.example.posterr.data.datasource.LocalUserDataSource
 import com.example.posterr.data.repository.PostRepositoryImpl
@@ -55,6 +56,11 @@ object AppModule {
     @Provides
     fun provideDailyPostCountDao(database: PosterrDatabase): DailyPostCountDao {
         return database.dailyPostCountDao()
+    }
+
+    @Provides
+    fun provideUserStatsDao(database: PosterrDatabase): UserStatsDao {
+        return database.userStatsDao()
     }
 
     @Provides

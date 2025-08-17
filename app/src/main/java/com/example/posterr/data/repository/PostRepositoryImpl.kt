@@ -46,4 +46,7 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun getPostsCountToday(userId: String): Int = localDataSource.getPostsCountToday(userId)
 
+    override suspend fun getPostsByUser(userId: String): List<Post> = localDataSource.getPostsByUser(userId)
+
+
 }

@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.posterr.presentation.home.HomeScreen
+import com.example.posterr.presentation.profile.ProfileScreen
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
@@ -29,7 +30,11 @@ fun PosterrNavigation(
         }
 
         composable(Screen.Profile.route) {
-            //profile
+            ProfileScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

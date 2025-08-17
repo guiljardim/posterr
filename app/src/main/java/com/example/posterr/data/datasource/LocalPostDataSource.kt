@@ -126,6 +126,10 @@ class LocalPostDataSource @Inject constructor(
         }
     }
 
+    suspend fun getPostsByUser(userId: String): List<Post> {
+        val postEntities = postDao.getPostsByUser(userId)
+        return convertToDomainModels(postEntities)
+    }
 
     fun getTodayMillis(): Long {
         val calendar = Calendar.getInstance()

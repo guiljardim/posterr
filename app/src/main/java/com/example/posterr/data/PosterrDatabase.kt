@@ -1,16 +1,21 @@
 package com.example.posterr.data
 
-import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.posterr.data.converters.Converters
 import com.example.posterr.data.dao.DailyPostCountDao
 import com.example.posterr.data.dao.PostDao
 import com.example.posterr.data.dao.UserDao
+import com.example.posterr.data.dao.UserStatsDao
 import com.example.posterr.data.entity.DailyPostCountEntity
 import com.example.posterr.data.entity.PostEntity
 import com.example.posterr.data.entity.UserEntity
+import com.example.posterr.data.entity.UserStatsEntity
+
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import android.content.Context
+import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,15 +24,18 @@ import kotlinx.coroutines.launch
     entities = [
         UserEntity::class,
         PostEntity::class,
+        UserStatsEntity::class,
         DailyPostCountEntity::class
     ],
     version = 1,
     exportSchema = false
 )
+@TypeConverters(Converters::class)
 abstract class PosterrDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
     abstract fun postDao(): PostDao
+    abstract fun userStatsDao(): UserStatsDao
     abstract fun dailyPostCountDao(): DailyPostCountDao
 
     companion object {
@@ -68,9 +76,11 @@ abstract class PosterrDatabase : RoomDatabase() {
         suspend fun populateDatabase(database: PosterrDatabase) {
             val userDao = database.userDao()
             val postDao = database.postDao()
+            val userStatsDao = database.userStatsDao()
 
             userDao.deleteAllUsers()
             postDao.deleteAllPosts()
+            userStatsDao.deleteAllUserStats()
 
             DatabaseSeeder.seedDatabase(database)
         }
