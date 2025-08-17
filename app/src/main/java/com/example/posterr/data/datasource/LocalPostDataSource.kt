@@ -17,6 +17,10 @@ class LocalPostDataSource @Inject constructor(
     private val dailyPostCountDao: DailyPostCountDao
 ) {
 
+    suspend fun getAllPosts(): List<Post> {
+        val postEntities = postDao.getAllPosts()
+        return convertToDomainModels(postEntities)
+    }
 
     suspend fun createOriginalPost(content: String, authorId: String): ResponseResult<Post> {
         if (!canCreatePostToday(authorId)) {
@@ -110,6 +114,16 @@ class LocalPostDataSource @Inject constructor(
     private suspend fun incrementPostsToday(userId: String) {
         val today = getTodayMillis().toString()
         dailyPostCountDao.incrementPostCountForDate(userId, today)
+    }
+
+    private suspend fun convertToDomainModels(postEntities: List<PostEntity>): List<Post> {
+        return postEntities.map { postEntity ->
+            val originalPost = if (postEntity.originalPostId != null) {
+                postDao.getPostById(postEntity.originalPostId)?.toDomainModel()
+            } else null
+
+            postEntity.toDomainModel(originalPost)
+        }
     }
 
 

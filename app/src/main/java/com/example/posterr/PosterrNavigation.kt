@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.posterr.presentation.home.HomeScreen
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
@@ -20,7 +21,11 @@ fun PosterrNavigation(
         startDestination = Screen.Home.route
     ) {
         composable(Screen.Home.route) {
-           //Home
+            HomeScreen(
+                onNavigateToProfile = {
+                    navController.navigate(Screen.Profile.route)
+                }
+            )
         }
 
         composable(Screen.Profile.route) {

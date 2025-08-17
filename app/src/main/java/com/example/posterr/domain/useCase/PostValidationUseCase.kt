@@ -35,7 +35,7 @@ class PostValidationUseCase @Inject constructor(
         return ValidationResult.Valid
     }
 
-    suspend fun validateRepost(originalPostId: String): ValidationResult {
+    suspend fun validateRepost(): ValidationResult {
         val loggedInUser = userRepository.getLoggedInUser()
         if (loggedInUser == null) {
             return ValidationResult.Invalid("User is not logged in")
@@ -48,7 +48,7 @@ class PostValidationUseCase @Inject constructor(
         return ValidationResult.Valid
     }
 
-    suspend fun validateQuotePost(content: String, originalPostId: String): ValidationResult {
+    suspend fun validateQuotePost(content: String,): ValidationResult {
         val loggedInUser = userRepository.getLoggedInUser()
         if (loggedInUser == null) {
             return ValidationResult.Invalid("User is not logged in")

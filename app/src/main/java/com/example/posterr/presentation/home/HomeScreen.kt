@@ -32,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.posterr.presentation.common.CreatePostDialog
 import com.example.posterr.presentation.common.PostCard
 import com.example.posterr.presentation.common.QuotePostDialog
+import androidx.compose.foundation.lazy.items
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

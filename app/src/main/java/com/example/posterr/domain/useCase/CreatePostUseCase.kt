@@ -26,7 +26,7 @@ class CreatePostUseCase @Inject constructor(
     }
 
     suspend fun createRepost(originalPostId: String): PostResult {
-        when (val validation = validationUseCase.validateRepost(originalPostId)) {
+        when (val validation = validationUseCase.validateRepost()) {
             is PostValidationUseCase.ValidationResult.Valid -> {
                 val loggedInUser = userRepository.getLoggedInUser()
                     ?: return PostResult.error("User is not logged in")
@@ -41,7 +41,7 @@ class CreatePostUseCase @Inject constructor(
     }
 
     suspend fun createQuotePost(content: String, originalPostId: String): PostResult {
-        when (val validation = validationUseCase.validateQuotePost(content, originalPostId)) {
+        when (val validation = validationUseCase.validateQuotePost(content)) {
             is PostValidationUseCase.ValidationResult.Valid -> {
                 val loggedInUser = userRepository.getLoggedInUser()
                     ?: return PostResult.error("User is not logged in")
