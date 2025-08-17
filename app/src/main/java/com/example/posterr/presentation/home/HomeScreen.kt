@@ -63,24 +63,11 @@ fun HomeScreen(
             }
         }
     ) { paddingValues ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (uiState.postsCountToday > 0) {
-                Surface(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Posts today: ${uiState.postsCountToday}/5",
-                        modifier = Modifier.padding(16.dp),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-
             if (uiState.isLoading) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -100,17 +87,32 @@ fun HomeScreen(
                     )
                 }
             } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(uiState.posts) { post ->
-                        PostCard(
-                            post = post,
-                            onRepost = { viewModel.createRepost(post.id) },
-                            onQuote = { viewModel.setShowQuoteDialog(true, post.id) }
-                        )
+                Column {
+                    if (uiState.postsCountToday > 0) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.surfaceVariant,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Posts today: ${uiState.postsCountToday}/5",
+                                modifier = Modifier.padding(16.dp),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
+
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        items(uiState.posts) { post ->
+                            PostCard(
+                                post = post,
+                                onRepost = { viewModel.createRepost(post.id) },
+                                onQuote = { viewModel.setShowQuoteDialog(true, post.id) }
+                            )
+                        }
                     }
                 }
             }
@@ -124,7 +126,9 @@ fun HomeScreen(
             if (uiState.error != null) {
                 Surface(
                     color = MaterialTheme.colorScheme.errorContainer,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.TopCenter)
                 ) {
                     Text(
                         text = "Erro: ${uiState.error}",

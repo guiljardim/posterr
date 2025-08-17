@@ -2,6 +2,7 @@ package com.example.posterr.data.datasource
 
 import com.example.posterr.data.dao.DailyPostCountDao
 import com.example.posterr.data.dao.PostDao
+import com.example.posterr.data.entity.DailyPostCountEntity
 import com.example.posterr.data.entity.PostEntity
 import com.example.posterr.domain.model.Post
 import com.example.posterr.domain.model.PostType
@@ -19,10 +20,6 @@ class LocalPostDataSource @Inject constructor(
 
     suspend fun getAllPosts(): List<Post> {
         val postEntities = postDao.getAllPosts()
-        println("DEBUG: Found ${postEntities.size} posts in database")
-        postEntities.forEach { post ->
-            println("DEBUG: Post ID: ${post.id}, Content: ${post.content}, Author: ${post.authorId}, Type: ${post.postType}")
-        }
         return convertToDomainModels(postEntities)
     }
 
@@ -110,31 +107,51 @@ class LocalPostDataSource @Inject constructor(
 
     suspend fun getPostsCountToday(userId: String): Int {
         val today = getTodayMillis().toString()
-        return dailyPostCountDao.getPostCountForDateOrZero(userId, today)
+        return try {
+            dailyPostCountDao.getPostCountForDateOrZero(userId, today)
+        } catch (e: Exception) {
+            0
+        }
     }
 
     suspend fun canCreatePostToday(userId: String): Boolean = getPostsCountToday(userId) < 5
 
     private suspend fun incrementPostsToday(userId: String) {
         val today = getTodayMillis().toString()
-        dailyPostCountDao.incrementPostCountForDate(userId, today)
+        try {
+            val currentCount = dailyPostCountDao.getPostCountForDate(userId, today)
+            val newCount = (currentCount ?: 0) + 1
+            
+            val dailyPostCount = DailyPostCountEntity(
+                userId = userId,
+                date = today,
+                count = newCount
+            )
+            dailyPostCountDao.insertDailyPostCount(dailyPostCount)
+        } catch (e: Exception) {
+            try {
+                val dailyPostCount = DailyPostCountEntity(
+                    userId = userId,
+                    date = today,
+                    count = 1
+                )
+                dailyPostCountDao.insertDailyPostCount(dailyPostCount)
+            } catch (e2: Exception) {
+                // Silently handle error
+            }
+        }
     }
 
     private suspend fun convertToDomainModels(postEntities: List<PostEntity>): List<Post> {
-        println("DEBUG: Converting ${postEntities.size} posts to domain models")
         return postEntities.mapNotNull { postEntity ->
             try {
                 val originalPost = if (postEntity.originalPostId != null) {
-                    println("DEBUG: Looking for original post: ${postEntity.originalPostId}")
                     postDao.getPostById(postEntity.originalPostId)?.toDomainModel()
                 } else null
 
                 val domainPost = postEntity.toDomainModel(originalPost)
-                println("DEBUG: Successfully converted post: ${domainPost.id}")
                 domainPost
             } catch (e: Exception) {
-                // Se houver erro na conversão, retornar null para filtrar o post
-                println("DEBUG: Error converting post ${postEntity.id}: ${e.message}")
                 null
             }
         }

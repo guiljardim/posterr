@@ -8,7 +8,6 @@ import java.util.Calendar
 object DatabaseSeeder {
 
     suspend fun seedDatabase(database: PosterrDatabase) {
-        println("DEBUG: Starting database seeding...")
         val userDao = database.userDao()
         val postDao = database.postDao()
 
@@ -39,9 +38,7 @@ object DatabaseSeeder {
             )
         )
 
-        println("DEBUG: Inserting ${users.size} users...")
         userDao.insertUsers(users)
-        println("DEBUG: Users inserted successfully")
 
         val posts = listOf(
             PostEntity(
@@ -106,10 +103,7 @@ object DatabaseSeeder {
             )
         )
 
-        println("DEBUG: Inserting ${posts.size} posts...")
         postDao.insertPosts(posts)
-        println("DEBUG: Posts inserted successfully")
-        println("DEBUG: Database seeding completed!")
     }
 
     fun getPastDate(hoursAgo: Int = 0, daysAgo: Int = 0): Long {
