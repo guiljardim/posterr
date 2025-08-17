@@ -4,8 +4,8 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import java.time.LocalDateTime
-
+import com.example.posterr.domain.model.Post
+import com.example.posterr.domain.model.PostType
 
 @Entity(
     tableName = "posts",
@@ -34,6 +34,20 @@ data class PostEntity(
     val id: String,
     val content: String,
     val authorId: String,
+    val postType: PostType,
     val createdAt: Long,
     val originalPostId: String? = null
-)
+) {
+
+    fun toDomainModel(originalPost: Post? = null): Post {
+        return Post(
+            id = id,
+            content = content,
+            authorId = authorId,
+            type = postType,
+            createdAt = createdAt,
+            originalPost = originalPost
+        )
+    }
+}
+

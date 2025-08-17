@@ -5,8 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.posterr.data.dao.DailyPostCountDao
 import com.example.posterr.data.dao.PostDao
 import com.example.posterr.data.dao.UserDao
+import com.example.posterr.data.entity.DailyPostCountEntity
 import com.example.posterr.data.entity.PostEntity
 import com.example.posterr.data.entity.UserEntity
 import kotlinx.coroutines.CoroutineScope
@@ -17,6 +19,7 @@ import kotlinx.coroutines.launch
     entities = [
         UserEntity::class,
         PostEntity::class,
+        DailyPostCountEntity::class
     ],
     version = 1,
     exportSchema = false
@@ -25,6 +28,7 @@ abstract class PosterrDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
     abstract fun postDao(): PostDao
+    abstract fun dailyPostCountDao(): DailyPostCountDao
 
     companion object {
         @Volatile

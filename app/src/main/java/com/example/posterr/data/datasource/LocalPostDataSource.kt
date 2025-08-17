@@ -1,0 +1,124 @@
+package com.example.posterr.data.datasource
+
+import com.example.posterr.data.dao.DailyPostCountDao
+import com.example.posterr.data.dao.PostDao
+import com.example.posterr.data.entity.PostEntity
+import com.example.posterr.domain.model.Post
+import com.example.posterr.domain.model.PostType
+import com.example.posterr.domain.model.ResponseResult
+import java.util.Calendar
+import java.util.UUID
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class LocalPostDataSource @Inject constructor(
+    private val postDao: PostDao,
+    private val dailyPostCountDao: DailyPostCountDao
+) {
+
+
+    suspend fun createOriginalPost(content: String, authorId: String): ResponseResult<Post> {
+        if (!canCreatePostToday(authorId)) {
+            return ResponseResult.Error("Daily limit of 5 posts reached")
+        }
+
+        val postEntity = PostEntity(
+            id = UUID.randomUUID().toString(),
+            content = content,
+            authorId = authorId,
+            postType = PostType.ORIGINAL,
+            createdAt = System.currentTimeMillis()
+        )
+
+        try {
+            postDao.insertPost(postEntity)
+            incrementPostsToday(authorId)
+            return ResponseResult.Success(postEntity.toDomainModel())
+        } catch (e: Exception) {
+            return ResponseResult.Error("Failed to create post: ${e.message}")
+        }
+    }
+
+    suspend fun createRepost(originalPostId: String, authorId: String): ResponseResult<Post> {
+        val originalPostEntity = postDao.getPostById(originalPostId) ?: return ResponseResult.Error(
+            "Original post not found"
+        )
+
+        if (!canCreatePostToday(authorId)) {
+            return ResponseResult.Error("Daily limit of 5 posts reached")
+        }
+
+        val repostEntity = PostEntity(
+            id = UUID.randomUUID().toString(),
+            content = "",
+            authorId = authorId,
+            postType = PostType.REPOST,
+            createdAt = System.currentTimeMillis(),
+            originalPostId = originalPostId
+        )
+
+        try {
+            postDao.insertPost(repostEntity)
+            incrementPostsToday(authorId)
+            val originalPost = originalPostEntity.toDomainModel()
+            return ResponseResult.Success(repostEntity.toDomainModel(originalPost))
+        } catch (e: Exception) {
+            return ResponseResult.Error("Failed to create repost: ${e.message}")
+        }
+    }
+
+    suspend fun createQuotePost(
+        content: String,
+        originalPostId: String,
+        authorId: String
+    ): ResponseResult<Post> {
+        val originalPostEntity = postDao.getPostById(originalPostId) ?: return ResponseResult.Error(
+            "Original post not found"
+        )
+
+        if (!canCreatePostToday(authorId)) {
+            return ResponseResult.Error("Daily limit of 5 posts reached")
+        }
+
+        val quoteEntity = PostEntity(
+            id = UUID.randomUUID().toString(),
+            content = content,
+            authorId = authorId,
+            postType = PostType.QUOTE,
+            createdAt = System.currentTimeMillis(),
+            originalPostId = originalPostId
+        )
+
+        try {
+            postDao.insertPost(quoteEntity)
+            incrementPostsToday(authorId)
+            val originalPost = originalPostEntity.toDomainModel()
+            return ResponseResult.Success(quoteEntity.toDomainModel(originalPost))
+        } catch (e: Exception) {
+            return ResponseResult.Error("Failed to create quote post: ${e.message}")
+        }
+    }
+
+    suspend fun getPostsCountToday(userId: String): Int {
+        val today = getTodayMillis().toString()
+        return dailyPostCountDao.getPostCountForDateOrZero(userId, today)
+    }
+
+    suspend fun canCreatePostToday(userId: String): Boolean = getPostsCountToday(userId) < 5
+
+    private suspend fun incrementPostsToday(userId: String) {
+        val today = getTodayMillis().toString()
+        dailyPostCountDao.incrementPostCountForDate(userId, today)
+    }
+
+
+    fun getTodayMillis(): Long {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.timeInMillis
+    }
+}
