@@ -19,6 +19,10 @@ class LocalPostDataSource @Inject constructor(
 
     suspend fun getAllPosts(): List<Post> {
         val postEntities = postDao.getAllPosts()
+        println("DEBUG: Found ${postEntities.size} posts in database")
+        postEntities.forEach { post ->
+            println("DEBUG: Post ID: ${post.id}, Content: ${post.content}, Author: ${post.authorId}, Type: ${post.postType}")
+        }
         return convertToDomainModels(postEntities)
     }
 
@@ -117,12 +121,22 @@ class LocalPostDataSource @Inject constructor(
     }
 
     private suspend fun convertToDomainModels(postEntities: List<PostEntity>): List<Post> {
-        return postEntities.map { postEntity ->
-            val originalPost = if (postEntity.originalPostId != null) {
-                postDao.getPostById(postEntity.originalPostId)?.toDomainModel()
-            } else null
+        println("DEBUG: Converting ${postEntities.size} posts to domain models")
+        return postEntities.mapNotNull { postEntity ->
+            try {
+                val originalPost = if (postEntity.originalPostId != null) {
+                    println("DEBUG: Looking for original post: ${postEntity.originalPostId}")
+                    postDao.getPostById(postEntity.originalPostId)?.toDomainModel()
+                } else null
 
-            postEntity.toDomainModel(originalPost)
+                val domainPost = postEntity.toDomainModel(originalPost)
+                println("DEBUG: Successfully converted post: ${domainPost.id}")
+                domainPost
+            } catch (e: Exception) {
+                // Se houver erro na conversão, retornar null para filtrar o post
+                println("DEBUG: Error converting post ${postEntity.id}: ${e.message}")
+                null
+            }
         }
     }
 

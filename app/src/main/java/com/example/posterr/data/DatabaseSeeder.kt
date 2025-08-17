@@ -8,6 +8,7 @@ import java.util.Calendar
 object DatabaseSeeder {
 
     suspend fun seedDatabase(database: PosterrDatabase) {
+        println("DEBUG: Starting database seeding...")
         val userDao = database.userDao()
         val postDao = database.postDao()
 
@@ -38,7 +39,9 @@ object DatabaseSeeder {
             )
         )
 
+        println("DEBUG: Inserting ${users.size} users...")
         userDao.insertUsers(users)
+        println("DEBUG: Users inserted successfully")
 
         val posts = listOf(
             PostEntity(
@@ -60,30 +63,23 @@ object DatabaseSeeder {
                 content = "Kotlin is the best language for Android! Null safety is fantastic! 🎯",
                 authorId = "user3",
                 createdAt = getPastDate(hoursAgo = 6),
-                postType = PostType.QUOTE
-            ),
-            PostEntity(
-                id = "post4",
-                content = "Clean Architecture + Jetpack Compose = Quality Android applications! ✨",
-                authorId = "user4",
-                createdAt = getPastDate(hoursAgo = 3),
-                postType = PostType.REPOST
+                postType = PostType.ORIGINAL
             ),
             PostEntity(
                 id = "repost1",
-                content = "",
+                content = "Reposted",
                 authorId = "user1",
                 createdAt = getPastDate(hoursAgo = 12),
                 originalPostId = "post2",
-                postType = PostType.QUOTE
+                postType = PostType.REPOST
             ),
             PostEntity(
                 id = "repost2",
-                content = "",
+                content = "Reposted",
                 authorId = "user3",
                 createdAt = getPastDate(hoursAgo = 8),
                 originalPostId = "post1",
-                postType = PostType.QUOTE
+                postType = PostType.REPOST
             ),
             PostEntity(
                 id = "quote1",
@@ -91,7 +87,7 @@ object DatabaseSeeder {
                 authorId = "user4",
                 createdAt = getPastDate(hoursAgo = 4),
                 originalPostId = "post2",
-                postType = PostType.REPOST
+                postType = PostType.QUOTE
             ),
             PostEntity(
                 id = "quote2",
@@ -100,10 +96,20 @@ object DatabaseSeeder {
                 createdAt = getPastDate(hoursAgo = 2),
                 originalPostId = "post3",
                 postType = PostType.QUOTE
+            ),
+            PostEntity(
+                id = "post4",
+                content = "Clean Architecture + Jetpack Compose = Quality Android applications! ✨",
+                authorId = "user4",
+                createdAt = getPastDate(hoursAgo = 3),
+                postType = PostType.ORIGINAL
             )
         )
 
+        println("DEBUG: Inserting ${posts.size} posts...")
         postDao.insertPosts(posts)
+        println("DEBUG: Posts inserted successfully")
+        println("DEBUG: Database seeding completed!")
     }
 
     fun getPastDate(hoursAgo: Int = 0, daysAgo: Int = 0): Long {

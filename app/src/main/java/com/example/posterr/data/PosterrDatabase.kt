@@ -52,6 +52,7 @@ abstract class PosterrDatabase : RoomDatabase() {
                     PosterrDatabase::class.java,
                     "posterr_database"
                 )
+                    .fallbackToDestructiveMigration()
                     .addCallback(PosterrDatabaseCallback(scope))
                     .build()
                 INSTANCE = instance
@@ -67,7 +68,24 @@ abstract class PosterrDatabase : RoomDatabase() {
                 super.onCreate(db)
                 INSTANCE?.let { database ->
                     scope.launch(Dispatchers.IO) {
-                        populateDatabase(database)
+                        try {
+                            populateDatabase(database)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+            }
+
+            override fun onOpen(db: SupportSQLiteDatabase) {
+                super.onOpen(db)
+                INSTANCE?.let { database ->
+                    scope.launch(Dispatchers.IO) {
+                        try {
+                            populateDatabase(database)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -78,11 +96,14 @@ abstract class PosterrDatabase : RoomDatabase() {
             val postDao = database.postDao()
             val userStatsDao = database.userStatsDao()
 
-            userDao.deleteAllUsers()
-            postDao.deleteAllPosts()
-            userStatsDao.deleteAllUserStats()
+            val existingUsers = userDao.getLoggedInUser()
+            if (existingUsers == null) {
+                userDao.deleteAllUsers()
+                postDao.deleteAllPosts()
+                userStatsDao.deleteAllUserStats()
 
-            DatabaseSeeder.seedDatabase(database)
+                DatabaseSeeder.seedDatabase(database)
+            }
         }
     }
 }

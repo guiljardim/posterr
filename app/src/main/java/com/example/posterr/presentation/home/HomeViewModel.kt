@@ -34,13 +34,15 @@ class HomeViewModel @Inject constructor(
                 val posts = getAllPostsUseCase()
                 _uiState.value = _uiState.value.copy(
                     posts = posts,
-                    isLoading = false
+                    isLoading = false,
+                    error = null
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
-                    error = e.message ?: "Error loading posts",
+                    error = e.message ?: "Error loading posts: ${e.toString()}",
                     isLoading = false
                 )
+                e.printStackTrace()
             }
         }
     }

@@ -117,6 +117,21 @@ fun HomeScreen(
 
             uiState.error?.let { error ->
                 LaunchedEffect(error) {
+                    
+                }
+            }
+
+            if (uiState.error != null) {
+                Surface(
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Erro: ${uiState.error}",
+                        modifier = Modifier.padding(16.dp),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
                 }
             }
 
