@@ -9,7 +9,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.posterr.domain.model.Post
 import com.example.posterr.domain.model.PostType
-import com.example.posterr.presentation.common.extensions.toFormattedDate
+import com.example.posterr.presentation.common.extensions.toPostDate
 
 @Composable
 fun PostCard(
@@ -36,7 +36,7 @@ fun PostCard(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = post.createdAt.toFormattedDate(),
+                    text = post.createdAt.toPostDate(),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

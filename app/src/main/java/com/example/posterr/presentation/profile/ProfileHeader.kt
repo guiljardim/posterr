@@ -28,7 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.posterr.domain.model.User
 import com.example.posterr.domain.model.UserStats
-import com.example.posterr.presentation.common.extensions.toFormattedDate
+import com.example.posterr.presentation.common.extensions.toProfileDate
 
 @Composable
 fun ProfileHeader(
@@ -108,7 +108,7 @@ fun ProfileHeader(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "Joined on ${user.joinDate.toFormattedDate()}",
+                        text = "Joined on ${user.joinDate.toProfileDate()}",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -141,6 +141,12 @@ fun ProfileHeader(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "posts: ${stats.originalPostsCount}, reposts: ${stats.repostCount}, quote-posts: ${stats.quoteCount}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
             if (postsCountToday > 0) {
                 Surface(

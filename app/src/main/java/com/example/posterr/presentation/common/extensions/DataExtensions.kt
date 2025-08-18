@@ -4,9 +4,14 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
-fun Long.toFormattedDate(pattern: String = "dd/MM/yyyy HH:mm"): String {
+fun Long.toProfileDate(): String {
     val date = Date(this)
-    val formatter = SimpleDateFormat(pattern, Locale.getDefault())
+    val formatter = SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH)
+    return formatter.format(date)
+}
+
+fun Long.toPostDate(): String {
+    val date = Date(this)
+    val formatter = SimpleDateFormat("MMMM dd, yyyy 'at' HH:mm", Locale.ENGLISH)
     return formatter.format(date)
 }
