@@ -121,7 +121,7 @@ class LocalPostDataSource @Inject constructor(
         try {
             val currentCount = dailyPostCountDao.getPostCountForDate(userId, today)
             val newCount = (currentCount ?: 0) + 1
-            
+
             val dailyPostCount = DailyPostCountEntity(
                 userId = userId,
                 date = today,
@@ -136,8 +136,8 @@ class LocalPostDataSource @Inject constructor(
                     count = 1
                 )
                 dailyPostCountDao.insertDailyPostCount(dailyPostCount)
-            } catch (e2: Exception) {
-                // Silently handle error
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
