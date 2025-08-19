@@ -104,7 +104,8 @@ fun ProfileScreen(
                             PostCard(
                                 post = post,
                                 onRepost = { viewModel.createRepost(post.id) },
-                                onQuote = { viewModel.setShowQuoteDialog(true, post.id) }
+                                onQuote = { viewModel.setShowQuoteDialog(true, post.id) },
+                                authorUsername = profileData.user.username
                             )
                         }
                     }

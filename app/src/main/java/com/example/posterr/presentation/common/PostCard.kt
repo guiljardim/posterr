@@ -18,6 +18,24 @@ fun PostCard(
     post: Post,
     onRepost: () -> Unit,
     onQuote: () -> Unit,
+    authorUsername: String? = null,
+    modifier: Modifier = Modifier
+) {
+    PostCardContent(
+        post = post,
+        onRepost = onRepost,
+        onQuote = onQuote,
+        authorUsername = authorUsername,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun PostCardContent(
+    post: Post,
+    onRepost: () -> Unit,
+    onQuote: () -> Unit,
+    authorUsername: String?,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -33,7 +51,7 @@ fun PostCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "@${post.authorId}",
+                    text = "@${authorUsername ?: post.authorId}",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -69,7 +87,7 @@ fun PostCard(
                         modifier = Modifier.padding(12.dp)
                     ) {
                         Text(
-                            text = stringResource(id = R.string.original_post_from, post.originalPost.authorId),
+                            text = stringResource(id = R.string.original_post_from, authorUsername ?: post.originalPost.authorId),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

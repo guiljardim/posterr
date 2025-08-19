@@ -1,6 +1,6 @@
 # Posterr - Social Media Application
 
-**Developer:** [Seu Nome Aqui]
+**Developer:** Guilherme Jardim
 
 ## 📱 Project Overview
 
@@ -204,51 +204,17 @@ The demo video showcases:
 
 ### What I Would Improve with More Time
 
-1. **Performance Optimizations**
-   - Implement pagination for large post feeds
-   - Add lazy loading for images and content
-   - Optimize database queries with proper indexing
-   - Implement caching strategies
-
-2. **User Experience Enhancements**
+1. **User Experience Enhancements**
    - Add pull-to-refresh functionality
    - Implement search and filtering capabilities
    - Add post editing capabilities
    - Improve error messages and user feedback
 
-3. **Technical Improvements**
+2. **Technical Improvements**
    - Add comprehensive error handling
    - Implement proper logging and analytics
    - Add unit tests for edge cases
    - Implement UI tests with Espresso
-
-4. **Architecture Enhancements**
-   - Add offline-first capabilities
-   - Implement proper state management
-   - Add network layer for future API integration
-   - Implement proper navigation with deep linking
-
-### Strategy for Performance Issues
-
-If the app is slow on specific devices:
-
-1. **Immediate Actions**
-   - Profile the app using Android Profiler
-   - Identify memory leaks and optimize memory usage
-   - Implement lazy loading for lists
-   - Add pagination to reduce initial load time
-
-2. **Database Optimizations**
-   - Add proper database indices
-   - Implement query optimization
-   - Use background threads for database operations
-   - Implement database migration strategies
-
-3. **UI Optimizations**
-   - Reduce view hierarchy complexity
-   - Implement view recycling in lists
-   - Optimize image loading and caching
-   - Use Compose's remember and derivedStateOf effectively
 
 ### Scaling Strategy for Thousands of Users
 
@@ -258,28 +224,8 @@ If the app is slow on specific devices:
    - Implement data synchronization strategies
    - Use background jobs for data updates
 
-2. **Performance Optimizations**
-   - Implement caching layers (Room + Network)
-   - Use WorkManager for background tasks
-   - Implement proper error handling and retry logic
-   - Add analytics and crash reporting
 
-3. **Architecture Improvements**
-   - Add network layer with Retrofit/OkHttp
-   - Implement proper authentication
-   - Add push notifications
-   - Implement real-time updates with WebSockets
-
-4. **User Experience**
+2. **User Experience**
    - Add infinite scrolling
    - Implement proper loading states
-   - Add offline mode capabilities
    - Implement proper error recovery
-
-## 📝 License
-
-This project is created for the Strider Technical Assessment. All rights reserved.
-
----
-
-**Note**: This application is designed to work entirely with local data for demonstration purposes. The architecture is prepared for future API integration while maintaining a clean separation of concerns.

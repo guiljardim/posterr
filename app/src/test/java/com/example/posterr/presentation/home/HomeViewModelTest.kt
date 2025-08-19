@@ -5,6 +5,7 @@ import com.example.posterr.domain.model.PostResult
 import com.example.posterr.domain.model.PostType
 import com.example.posterr.domain.useCase.CreatePostUseCase
 import com.example.posterr.domain.useCase.GetAllPostsUseCase
+import com.example.posterr.domain.useCase.PostWithAuthor
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.verify
@@ -44,18 +45,21 @@ class HomeViewModelTest {
     @Test
     fun `init should load posts and user post count`() = runTest {
         // Given
-        val posts = listOf(
-            Post(
-                id = "post1",
-                content = "Test post",
-                authorId = "user1",
-                type = PostType.ORIGINAL,
-                createdAt = 1234567890L
+        val postsWithAuthors = listOf(
+            PostWithAuthor(
+                post = Post(
+                    id = "post1",
+                    content = "Test post",
+                    authorId = "user1",
+                    type = PostType.ORIGINAL,
+                    createdAt = 1234567890L
+                ),
+                authorUsername = "testuser"
             )
         )
         
         // Configure mocks before creating ViewModel
-        coEvery { getAllPostsUseCase() } returns posts
+        coEvery { getAllPostsUseCase() } returns postsWithAuthors
         coEvery { createPostUseCase.getPostsCountToday() } returns 2
         coEvery { createPostUseCase.canCreatePostToday() } returns true
         
@@ -67,7 +71,7 @@ class HomeViewModelTest {
 
         // Then
         val uiState = testViewModel.uiState.first()
-        assertEquals("Posts should be loaded", posts, uiState.posts)
+        assertEquals("Posts should be loaded", postsWithAuthors, uiState.posts)
         assertEquals("Posts count should be loaded", 2, uiState.postsCountToday)
         assertTrue("User should be able to create post", uiState.canCreatePost)
         assertFalse("Should not be loading", uiState.isLoading)
@@ -77,23 +81,29 @@ class HomeViewModelTest {
     @Test
     fun `loadPosts should update UI state with posts when successful`() = runTest {
         // Given
-        val posts = listOf(
-            Post(
-                id = "post1",
-                content = "Test post 1",
-                authorId = "user1",
-                type = PostType.ORIGINAL,
-                createdAt = 1234567890L
+        val postsWithAuthors = listOf(
+            PostWithAuthor(
+                post = Post(
+                    id = "post1",
+                    content = "Test post 1",
+                    authorId = "user1",
+                    type = PostType.ORIGINAL,
+                    createdAt = 1234567890L
+                ),
+                authorUsername = "testuser1"
             ),
-            Post(
-                id = "post2",
-                content = "Test post 2",
-                authorId = "user2",
-                type = PostType.ORIGINAL,
-                createdAt = 1234567891L
+            PostWithAuthor(
+                post = Post(
+                    id = "post2",
+                    content = "Test post 2",
+                    authorId = "user2",
+                    type = PostType.ORIGINAL,
+                    createdAt = 1234567891L
+                ),
+                authorUsername = "testuser2"
             )
         )
-        coEvery { getAllPostsUseCase() } returns posts
+        coEvery { getAllPostsUseCase() } returns postsWithAuthors
 
         // When
         homeViewModel.loadPosts()
@@ -101,7 +111,7 @@ class HomeViewModelTest {
 
         // Then
         val uiState = homeViewModel.uiState.first()
-        assertEquals("Posts should be loaded", posts, uiState.posts)
+        assertEquals("Posts should be loaded", postsWithAuthors, uiState.posts)
         assertFalse("Should not be loading", uiState.isLoading)
         assertNull("Should not have error", uiState.error)
     }
@@ -160,10 +170,10 @@ class HomeViewModelTest {
             type = PostType.ORIGINAL,
             createdAt = 1234567890L
         )
-        val posts = listOf(post)
+        val postsWithAuthors = listOf(PostWithAuthor(post, "testuser"))
         
         coEvery { createPostUseCase.createOriginalPost(content) } returns PostResult.success(post)
-        coEvery { getAllPostsUseCase() } returns posts
+        coEvery { getAllPostsUseCase() } returns postsWithAuthors
         coEvery { createPostUseCase.getPostsCountToday() } returns 1
         coEvery { createPostUseCase.canCreatePostToday() } returns true
 
@@ -175,7 +185,7 @@ class HomeViewModelTest {
         val uiState = homeViewModel.uiState.first()
         assertFalse("Should not be creating post", uiState.isCreatingPost)
         assertNull("Should not have error", uiState.error)
-        assertEquals("Posts should be updated", posts, uiState.posts)
+        assertEquals("Posts should be updated", postsWithAuthors, uiState.posts)
         assertEquals("Posts count should be updated", 1, uiState.postsCountToday)
     }
 
@@ -231,10 +241,10 @@ class HomeViewModelTest {
                 createdAt = 1234567890L
             )
         )
-        val posts = listOf(post)
+        val postsWithAuthors = listOf(PostWithAuthor(post, "testuser"))
         
         coEvery { createPostUseCase.createRepost(postId) } returns PostResult.success(post)
-        coEvery { getAllPostsUseCase() } returns posts
+        coEvery { getAllPostsUseCase() } returns postsWithAuthors
         coEvery { createPostUseCase.getPostsCountToday() } returns 1
         coEvery { createPostUseCase.canCreatePostToday() } returns true
 
@@ -246,7 +256,7 @@ class HomeViewModelTest {
         val uiState = homeViewModel.uiState.first()
         assertFalse("Should not be creating post", uiState.isCreatingPost)
         assertNull("Should not have error", uiState.error)
-        assertEquals("Posts should be updated", posts, uiState.posts)
+        assertEquals("Posts should be updated", postsWithAuthors, uiState.posts)
     }
 
     @Test
@@ -316,10 +326,10 @@ class HomeViewModelTest {
                 createdAt = 1234567890L
             )
         )
-        val posts = listOf(post)
+        val postsWithAuthors = listOf(PostWithAuthor(post, "testuser"))
         
         coEvery { createPostUseCase.createQuotePost(content, postId) } returns PostResult.success(post)
-        coEvery { getAllPostsUseCase() } returns posts
+        coEvery { getAllPostsUseCase() } returns postsWithAuthors
         coEvery { createPostUseCase.getPostsCountToday() } returns 1
         coEvery { createPostUseCase.canCreatePostToday() } returns true
 
@@ -331,7 +341,7 @@ class HomeViewModelTest {
         val uiState = homeViewModel.uiState.first()
         assertFalse("Should not be creating post", uiState.isCreatingPost)
         assertNull("Should not have error", uiState.error)
-        assertEquals("Posts should be updated", posts, uiState.posts)
+        assertEquals("Posts should be updated", postsWithAuthors, uiState.posts)
     }
 
     @Test
@@ -447,25 +457,28 @@ class HomeViewModelTest {
     @Test
     fun `HomeUiState copy should work correctly`() {
         // Given
-        val posts = listOf(
-            Post(
-                id = "post1",
-                content = "Test post",
-                authorId = "user1",
-                type = PostType.ORIGINAL,
-                createdAt = 1234567890L
+        val postsWithAuthors = listOf(
+            PostWithAuthor(
+                post = Post(
+                    id = "post1",
+                    content = "Test post",
+                    authorId = "user1",
+                    type = PostType.ORIGINAL,
+                    createdAt = 1234567890L
+                ),
+                authorUsername = "testuser"
             )
         )
 
         // When
         val uiState = HomeUiState().copy(
-            posts = posts,
+            posts = postsWithAuthors,
             isLoading = true,
             error = "Test error"
         )
 
         // Then
-        assertEquals("Posts should be updated", posts, uiState.posts)
+        assertEquals("Posts should be updated", postsWithAuthors, uiState.posts)
         assertTrue("Should be loading", uiState.isLoading)
         assertEquals("Should have error", "Test error", uiState.error)
         // Other fields should remain default

@@ -85,8 +85,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideGetAllPostsUseCase(
-        postRepository: PostRepository
-    ): GetAllPostsUseCase = GetAllPostsUseCase(postRepository)
+        postRepository: PostRepository,
+        userRepository: UserRepository
+    ): GetAllPostsUseCase = GetAllPostsUseCase(postRepository, userRepository)
 
     @Provides
     @Singleton

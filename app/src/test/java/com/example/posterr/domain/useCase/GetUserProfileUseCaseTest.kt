@@ -37,12 +37,6 @@ class GetUserProfileUseCaseTest {
             joinDate = 1234567890L,
             isLoggedIn = true
         )
-        val userStats = UserStats(
-            userId = userId,
-            originalPostsCount = 5,
-            repostCount = 3,
-            quoteCount = 2
-        )
         val posts = listOf(
             Post(
                 id = "post1",
@@ -61,7 +55,6 @@ class GetUserProfileUseCaseTest {
         )
 
         coEvery { userRepository.getUserById(userId) } returns user
-        coEvery { userRepository.getUserStats(userId) } returns userStats
         coEvery { postRepository.getPostsByUser(userId) } returns posts
 
         // When
@@ -70,11 +63,14 @@ class GetUserProfileUseCaseTest {
         // Then
         assertNotNull("Result should not be null", result)
         assertEquals("User should match", user, result?.user)
-        assertEquals("User stats should match", userStats, result?.stats)
         assertEquals("Posts should match", posts, result?.posts)
+        
+        // Stats should be calculated from posts
+        assertEquals("Original posts count should be 2", 2, result?.stats?.originalPostsCount)
+        assertEquals("Repost count should be 0", 0, result?.stats?.repostCount)
+        assertEquals("Quote count should be 0", 0, result?.stats?.quoteCount)
 
         coVerify { userRepository.getUserById(userId) }
-        coVerify { userRepository.getUserStats(userId) }
         coVerify { postRepository.getPostsByUser(userId) }
     }
 
@@ -91,7 +87,6 @@ class GetUserProfileUseCaseTest {
         assertNull("Result should be null", result)
 
         coVerify { userRepository.getUserById(userId) }
-        coVerify(exactly = 0) { userRepository.getUserStats(any()) }
         coVerify(exactly = 0) { postRepository.getPostsByUser(any()) }
     }
 
@@ -105,11 +100,9 @@ class GetUserProfileUseCaseTest {
             joinDate = 1234567890L,
             isLoggedIn = true
         )
-        val userStats = UserStats(userId = userId)
         val posts = emptyList<Post>()
 
         coEvery { userRepository.getUserById(userId) } returns user
-        coEvery { userRepository.getUserStats(userId) } returns userStats
         coEvery { postRepository.getPostsByUser(userId) } returns posts
 
         // When
@@ -118,11 +111,14 @@ class GetUserProfileUseCaseTest {
         // Then
         assertNotNull("Result should not be null", result)
         assertEquals("User should match", user, result?.user)
-        assertEquals("User stats should match", userStats, result?.stats)
         assertTrue("Posts should be empty", result?.posts?.isEmpty() == true)
+        
+        // Stats should be calculated from empty posts
+        assertEquals("Original posts count should be 0", 0, result?.stats?.originalPostsCount)
+        assertEquals("Repost count should be 0", 0, result?.stats?.repostCount)
+        assertEquals("Quote count should be 0", 0, result?.stats?.quoteCount)
 
         coVerify { userRepository.getUserById(userId) }
-        coVerify { userRepository.getUserStats(userId) }
         coVerify { postRepository.getPostsByUser(userId) }
     }
 
@@ -136,7 +132,6 @@ class GetUserProfileUseCaseTest {
             joinDate = 1234567890L,
             isLoggedIn = true
         )
-        val userStats = UserStats(userId = userId)
         val posts = listOf(
             Post(
                 id = "post1",
@@ -148,7 +143,6 @@ class GetUserProfileUseCaseTest {
         )
 
         coEvery { userRepository.getUserById(userId) } returns user
-        coEvery { userRepository.getUserStats(userId) } returns userStats
         coEvery { postRepository.getPostsByUser(userId) } returns posts
 
         // When
@@ -157,58 +151,13 @@ class GetUserProfileUseCaseTest {
         // Then
         assertNotNull("Result should not be null", result)
         assertEquals("User should match", user, result?.user)
-        assertEquals("User stats should have default values", 0, result?.stats?.originalPostsCount)
-        assertEquals("User stats should have default values", 0, result?.stats?.repostCount)
-        assertEquals("User stats should have default values", 0, result?.stats?.quoteCount)
+        assertEquals("User stats should be calculated from posts", 1, result?.stats?.originalPostsCount)
+        assertEquals("User stats should be calculated from posts", 0, result?.stats?.repostCount)
+        assertEquals("User stats should be calculated from posts", 0, result?.stats?.quoteCount)
         assertEquals("Posts should match", posts, result?.posts)
 
         coVerify { userRepository.getUserById(userId) }
-        coVerify { userRepository.getUserStats(userId) }
         coVerify { postRepository.getPostsByUser(userId) }
-    }
-
-    @Test
-    fun `getLoggedInUserProfile should return UserProfileData when user is logged in`() = runTest {
-        // Given
-        val user = User(
-            id = "user1",
-            username = "testuser",
-            joinDate = 1234567890L,
-            isLoggedIn = true
-        )
-        val userStats = UserStats(
-            userId = user.id,
-            originalPostsCount = 3,
-            repostCount = 1,
-            quoteCount = 1
-        )
-        val posts = listOf(
-            Post(
-                id = "post1",
-                content = "Logged in user post",
-                authorId = user.id,
-                type = PostType.ORIGINAL,
-                createdAt = 1234567890L
-            )
-        )
-
-        coEvery { userRepository.getLoggedInUser() } returns user
-        coEvery { userRepository.getUserById(user.id) } returns user
-        coEvery { userRepository.getUserStats(user.id) } returns userStats
-        coEvery { postRepository.getPostsByUser(user.id) } returns posts
-
-        // When
-        val result = getUserProfileUseCase.getLoggedInUserProfile()
-
-        // Then
-        assertNotNull("Result should not be null", result)
-        assertEquals("User should match", user, result?.user)
-        assertEquals("User stats should match", userStats, result?.stats)
-        assertEquals("Posts should match", posts, result?.posts)
-
-        coVerify { userRepository.getLoggedInUser() }
-        coVerify { userRepository.getUserStats(user.id) }
-        coVerify { postRepository.getPostsByUser(user.id) }
     }
 
     @Test
@@ -223,8 +172,45 @@ class GetUserProfileUseCaseTest {
         assertNull("Result should be null", result)
 
         coVerify { userRepository.getLoggedInUser() }
-        coVerify(exactly = 0) { userRepository.getUserStats(any()) }
         coVerify(exactly = 0) { postRepository.getPostsByUser(any()) }
+    }
+
+    @Test
+    fun `getLoggedInUserProfile should return UserProfileData when user is logged in`() = runTest {
+        // Given
+        val user = User(
+            id = "user1",
+            username = "testuser",
+            joinDate = 1234567890L,
+            isLoggedIn = true
+        )
+        val posts = listOf(
+            Post(
+                id = "post1",
+                content = "Logged in user post",
+                authorId = user.id,
+                type = PostType.ORIGINAL,
+                createdAt = 1234567890L
+            )
+        )
+
+        coEvery { userRepository.getLoggedInUser() } returns user
+        coEvery { userRepository.getUserById(user.id) } returns user
+        coEvery { postRepository.getPostsByUser(user.id) } returns posts
+
+        // When
+        val result = getUserProfileUseCase.getLoggedInUserProfile()
+
+        // Then
+        assertNotNull("Result should not be null", result)
+        assertEquals("User should match", user, result?.user)
+        assertEquals("User stats should be calculated from posts", 1, result?.stats?.originalPostsCount)
+        assertEquals("User stats should be calculated from posts", 0, result?.stats?.repostCount)
+        assertEquals("User stats should be calculated from posts", 0, result?.stats?.quoteCount)
+        assertEquals("Posts should match", posts, result?.posts)
+
+        coVerify { userRepository.getLoggedInUser() }
+        coVerify { postRepository.getPostsByUser(user.id) }
     }
 
     @Test
@@ -236,12 +222,6 @@ class GetUserProfileUseCaseTest {
             username = "testuser",
             joinDate = 1234567890L,
             isLoggedIn = true
-        )
-        val userStats = UserStats(
-            userId = userId,
-            originalPostsCount = 2,
-            repostCount = 1,
-            quoteCount = 1
         )
         val posts = listOf(
             Post(
@@ -282,7 +262,6 @@ class GetUserProfileUseCaseTest {
         )
 
         coEvery { userRepository.getUserById(userId) } returns user
-        coEvery { userRepository.getUserStats(userId) } returns userStats
         coEvery { postRepository.getPostsByUser(userId) } returns posts
 
         // When
@@ -294,9 +273,13 @@ class GetUserProfileUseCaseTest {
         assertEquals("Original post type should match", PostType.ORIGINAL, result?.posts?.get(0)?.type)
         assertEquals("Repost type should match", PostType.REPOST, result?.posts?.get(1)?.type)
         assertEquals("Quote type should match", PostType.QUOTE, result?.posts?.get(2)?.type)
+        
+        // Stats should be calculated from posts
+        assertEquals("Original posts count should be 1", 1, result?.stats?.originalPostsCount)
+        assertEquals("Repost count should be 1", 1, result?.stats?.repostCount)
+        assertEquals("Quote count should be 1", 1, result?.stats?.quoteCount)
 
         coVerify { userRepository.getUserById(userId) }
-        coVerify { userRepository.getUserStats(userId) }
         coVerify { postRepository.getPostsByUser(userId) }
     }
 
@@ -309,12 +292,6 @@ class GetUserProfileUseCaseTest {
             username = "testuser",
             joinDate = 1234567890L,
             isLoggedIn = true
-        )
-        val userStats = UserStats(
-            userId = userId,
-            originalPostsCount = 50,
-            repostCount = 25,
-            quoteCount = 25
         )
         val posts = (1..100).map { index ->
             when (index % 3) {
@@ -357,7 +334,6 @@ class GetUserProfileUseCaseTest {
         }
 
         coEvery { userRepository.getUserById(userId) } returns user
-        coEvery { userRepository.getUserStats(userId) } returns userStats
         coEvery { postRepository.getPostsByUser(userId) } returns posts
 
         // When
@@ -368,9 +344,15 @@ class GetUserProfileUseCaseTest {
         assertEquals("Posts count should match", 100, result?.posts?.size)
         assertEquals("First post should match", posts[0], result?.posts?.get(0))
         assertEquals("Last post should match", posts[99], result?.posts?.get(99))
+        
+        // Stats should be calculated from posts (100 posts, ~33 of each type)
+        val totalPosts = result?.stats?.originalPostsCount?.plus(result?.stats?.repostCount ?: 0)?.plus(result?.stats?.quoteCount ?: 0) ?: 0
+        assertEquals("Total posts count should be 100", 100, totalPosts)
+        assertTrue("Original posts count should be reasonable", (result?.stats?.originalPostsCount ?: 0) in 30..40)
+        assertTrue("Repost count should be reasonable", (result?.stats?.repostCount ?: 0) in 30..40)
+        assertTrue("Quote count should be reasonable", (result?.stats?.quoteCount ?: 0) in 30..40)
 
         coVerify { userRepository.getUserById(userId) }
-        coVerify { userRepository.getUserStats(userId) }
         coVerify { postRepository.getPostsByUser(userId) }
     }
 

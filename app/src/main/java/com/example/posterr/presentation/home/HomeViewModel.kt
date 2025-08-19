@@ -6,6 +6,7 @@ import com.example.posterr.domain.model.Post
 import com.example.posterr.domain.model.PostResult
 import com.example.posterr.domain.useCase.CreatePostUseCase
 import com.example.posterr.domain.useCase.GetAllPostsUseCase
+import com.example.posterr.domain.useCase.PostWithAuthor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,9 +32,9 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
-                val posts = getAllPostsUseCase()
+                val postsWithAuthors = getAllPostsUseCase()
                 _uiState.value = _uiState.value.copy(
-                    posts = posts,
+                    posts = postsWithAuthors,
                     isLoading = false,
                     error = null
                 )
@@ -144,7 +145,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun loadUserPostCount() {
+    fun loadUserPostCount() {
         viewModelScope.launch {
             try {
                 val postsCount = createPostUseCase.getPostsCountToday()
@@ -170,10 +171,15 @@ class HomeViewModel @Inject constructor(
             selectedPostForQuote = postId
         )
     }
+
+    fun refreshAll() {
+        loadPosts()
+        loadUserPostCount()
+    }
 }
 
 data class HomeUiState(
-    val posts: List<Post> = emptyList(),
+    val posts: List<PostWithAuthor> = emptyList(),
     val isLoading: Boolean = false,
     val isCreatingPost: Boolean = false,
     val error: String? = null,

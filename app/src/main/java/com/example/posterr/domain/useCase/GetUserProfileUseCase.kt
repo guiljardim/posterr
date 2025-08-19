@@ -19,8 +19,13 @@ class GetUserProfileUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(userId: String): UserProfileData? {
         val user = userRepository.getUserById(userId) ?: return null
-        val stats = userRepository.getUserStats(userId)
         val posts = postRepository.getPostsByUser(userId)
+        val stats = UserStats(
+            userId = userId,
+            originalPostsCount = posts.count { it.type.name == "ORIGINAL" },
+            repostCount = posts.count { it.type.name == "REPOST" },
+            quoteCount = posts.count { it.type.name == "QUOTE" }
+        )
 
         return UserProfileData(user, stats, posts)
     }

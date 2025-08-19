@@ -44,6 +44,10 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.refreshAll()
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -108,11 +112,12 @@ fun HomeScreen(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        items(uiState.posts) { post ->
+                        items(uiState.posts) { postWithAuthor ->
                             PostCard(
-                                post = post,
-                                onRepost = { viewModel.createRepost(post.id) },
-                                onQuote = { viewModel.setShowQuoteDialog(true, post.id) }
+                                post = postWithAuthor.post,
+                                onRepost = { viewModel.createRepost(postWithAuthor.post.id) },
+                                onQuote = { viewModel.setShowQuoteDialog(true, postWithAuthor.post.id) },
+                                authorUsername = postWithAuthor.authorUsername
                             )
                         }
                     }
