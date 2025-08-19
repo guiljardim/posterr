@@ -1,3 +1,41 @@
 <resources>
     <string name="app_name">posterr</string>
+    <string name="title_posterr">Posterr</string>
+    <string name="title_profile">Profile</string>
+    <string name="cd_profile">Profile</string>
+    <string name="cd_create_post">Create Post</string>
+    <string name="home_empty">No posts yet. Be the first!</string>
+    <string name="posts_today">Posts today: %1$d/5</string>
+    <string name="error_prefix">Error: %1$s</string>
+
+    <!-- Create Post Dialog -->
+    <string name="create_post_title">Create Post</string>
+    <string name="quote_post_title">Create Quote</string>
+    <string name="label_thinking">What are you thinking?</string>
+    <string name="label_add_comment">Add your comment</string>
+    <string name="action_post">Post</string>
+    <string name="action_quote">Quote</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="daily_limit_reached">Daily limit of 5 posts reached!</string>
+    <string name="characters_remaining">%1$d characters remaining</string>
+    <string name="max_chars_exceeded">Maximum 777 characters!</string>
+
+    <!-- Post Card -->
+    <string name="original_post_from">Original post from @%1$s</string>
+    <string name="repost">Repost</string>
+    <string name="quote">Quote</string>
+    <string name="badge_original">ORIGINAL</string>
+    <string name="badge_repost">REPOST</string>
+    <string name="badge_quote">QUOTE</string>
+
+    <!-- Profile Header -->
+    <string name="back">Back</string>
+    <string name="new_post">New Post</string>
+    <string name="joined_on">Joined on %1$s</string>
+    <string name="stat_original_posts">Original Posts</string>
+    <string name="stat_reposts">Reposts</string>
+    <string name="stat_quotes">Quotes</string>
+    <string name="profile_empty">No posts yet. Create your first post!</string>
+    <string name="limit_reached">Limit reached</string>
+    <string name="posts_counters_line">posts: %1$d, reposts: %2$d, quote-posts: %3$d</string>
 </resources>

@@ -7,6 +7,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.posterr.R
 
 @Composable
 fun CreatePostDialog(
@@ -20,12 +22,12 @@ fun CreatePostDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Create Post") },
+        title = { Text(stringResource(id = R.string.create_post_title)) },
         text = {
             Column {
                 if (!canCreatePost) {
                     Text(
-                        text = "Daily limit of 5 posts reached!",
+                        text = stringResource(id = R.string.daily_limit_reached),
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodyMedium
                     )
@@ -33,7 +35,7 @@ fun CreatePostDialog(
                 }
 
                 Text(
-                    text = "Posts today: $postsCountToday/5",
+                    text = stringResource(id = R.string.posts_today, postsCountToday),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -43,7 +45,7 @@ fun CreatePostDialog(
                 OutlinedTextField(
                     value = content,
                     onValueChange = { if (it.length <= 777) content = it },
-                    label = { Text("What are you thinking?") },
+                    label = { Text(stringResource(id = R.string.label_thinking)) },
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 3,
                     maxLines = 5,
@@ -58,7 +60,7 @@ fun CreatePostDialog(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "$remainingChars characters remaining",
+                        text = stringResource(id = R.string.characters_remaining, remainingChars),
                         style = MaterialTheme.typography.bodySmall,
                         color = if (remainingChars < 50) MaterialTheme.colorScheme.error
                         else MaterialTheme.colorScheme.onSurfaceVariant
@@ -66,7 +68,7 @@ fun CreatePostDialog(
 
                     if (remainingChars < 0) {
                         Text(
-                            text = "Maximum 777 characters!",
+                            text = stringResource(id = R.string.max_chars_exceeded),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error
                         )
@@ -79,12 +81,12 @@ fun CreatePostDialog(
                 onClick = { onConfirm(content) },
                 enabled = content.isNotBlank() && canCreatePost && remainingChars >= 0
             ) {
-                Text("Post")
+                Text(stringResource(id = R.string.action_post))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(id = R.string.action_cancel))
             }
         }
     )

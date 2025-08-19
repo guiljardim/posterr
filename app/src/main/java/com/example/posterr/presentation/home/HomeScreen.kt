@@ -33,6 +33,8 @@ import com.example.posterr.presentation.common.CreatePostDialog
 import com.example.posterr.presentation.common.PostCard
 import com.example.posterr.presentation.common.QuotePostDialog
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.res.stringResource
+import com.example.posterr.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,10 +47,10 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Posterr") },
+                title = { Text(stringResource(id = R.string.title_posterr)) },
                 actions = {
                     IconButton(onClick = onNavigateToProfile) {
-                        Icon(Icons.Default.Person, contentDescription = "Profile")
+                        Icon(Icons.Default.Person, contentDescription = stringResource(id = R.string.cd_profile))
                     }
                 }
             )
@@ -58,7 +60,7 @@ fun HomeScreen(
                 FloatingActionButton(
                     onClick = { viewModel.setShowCreatePostDialog(true) }
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Create Post")
+                    Icon(Icons.Default.Add, contentDescription = stringResource(id = R.string.cd_create_post))
                 }
             }
         }
@@ -81,7 +83,7 @@ fun HomeScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No posts yet. Be the first!",
+                        text = stringResource(id = R.string.home_empty),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -94,7 +96,7 @@ fun HomeScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = "Posts today: ${uiState.postsCountToday}/5",
+                                text = stringResource(id = R.string.posts_today, uiState.postsCountToday),
                                 modifier = Modifier.padding(16.dp),
                                 style = MaterialTheme.typography.bodyMedium
                             )
@@ -131,7 +133,7 @@ fun HomeScreen(
                         .align(Alignment.TopCenter)
                 ) {
                     Text(
-                        text = "Erro: ${uiState.error}",
+                        text = stringResource(id = R.string.error_prefix, uiState.error!!),
                         modifier = Modifier.padding(16.dp),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onErrorContainer

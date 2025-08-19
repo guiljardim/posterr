@@ -1,5 +1,7 @@
 package com.example.posterr.presentation.common
 
+import androidx.compose.ui.res.stringResource
+import com.example.posterr.R
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -67,7 +69,7 @@ fun PostCard(
                         modifier = Modifier.padding(12.dp)
                     ) {
                         Text(
-                            text = "Original post from @${post.originalPost.authorId}",
+                            text = stringResource(id = R.string.original_post_from, post.originalPost.authorId),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -91,13 +93,13 @@ fun PostCard(
                     onClick = onRepost,
                     enabled = post.type == PostType.ORIGINAL
                 ) {
-                    Text("Repost")
+                    Text(stringResource(id = R.string.repost))
                 }
 
                 TextButton(
                     onClick = onQuote
                 ) {
-                    Text("Quote")
+                    Text(stringResource(id = R.string.quote))
                 }
             }
         }
@@ -107,9 +109,9 @@ fun PostCard(
 @Composable
 fun PostTypeBadge(postType: PostType) {
     val (text, color) = when (postType) {
-        PostType.ORIGINAL -> "ORIGINAL" to MaterialTheme.colorScheme.primary
-        PostType.REPOST -> "REPOST" to MaterialTheme.colorScheme.secondary
-        PostType.QUOTE -> "QUOTE" to MaterialTheme.colorScheme.tertiary
+        PostType.ORIGINAL -> stringResource(id = R.string.badge_original) to MaterialTheme.colorScheme.primary
+        PostType.REPOST -> stringResource(id = R.string.badge_repost) to MaterialTheme.colorScheme.secondary
+        PostType.QUOTE -> stringResource(id = R.string.badge_quote) to MaterialTheme.colorScheme.tertiary
     }
 
     Surface(

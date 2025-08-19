@@ -1,5 +1,8 @@
 package com.example.posterr.presentation.profile
 
+
+import androidx.compose.ui.res.stringResource
+import com.example.posterr.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,12 +58,12 @@ fun ProfileHeader(
                 IconButton(onClick = onNavigateBack) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back"
+                        contentDescription = stringResource(id = R.string.back)
                     )
                 }
 
                 Text(
-                    text = "Profile",
+                    text = stringResource(id = R.string.title_profile),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
@@ -69,7 +72,7 @@ fun ProfileHeader(
                     onClick = onCreatePost,
                     enabled = canCreatePost
                 ) {
-                    Text("New Post")
+                    Text(stringResource(id = R.string.new_post))
                 }
             }
 
@@ -108,7 +111,7 @@ fun ProfileHeader(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "Joined on ${user.joinDate.toProfileDate()}",
+                        text = stringResource(id = R.string.joined_on, user.joinDate.toProfileDate()),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -122,19 +125,19 @@ fun ProfileHeader(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 StatCard(
-                    title = "Original Posts",
+                    title = stringResource(id = R.string.stat_original_posts),
                     count = stats.originalPostsCount,
                     color = MaterialTheme.colorScheme.primary
                 )
 
                 StatCard(
-                    title = "Reposts",
+                    title = stringResource(id = R.string.stat_reposts),
                     count = stats.repostCount,
                     color = MaterialTheme.colorScheme.secondary
                 )
 
                 StatCard(
-                    title = "Quotes",
+                    title = stringResource(id = R.string.stat_quotes),
                     count = stats.quoteCount,
                     color = MaterialTheme.colorScheme.tertiary
                 )
@@ -143,7 +146,7 @@ fun ProfileHeader(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "posts: ${stats.originalPostsCount}, reposts: ${stats.repostCount}, quote-posts: ${stats.quoteCount}",
+                text = stringResource(id = R.string.posts_counters_line, stats.originalPostsCount, stats.repostCount, stats.quoteCount),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -161,13 +164,13 @@ fun ProfileHeader(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Posts today: $postsCountToday/5",
+                            text = stringResource(id = R.string.posts_today, postsCountToday),
                             style = MaterialTheme.typography.bodyMedium
                         )
 
                         if (!canCreatePost) {
                             Text(
-                                text = "Limit reached",
+                                text = stringResource(id = R.string.limit_reached),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.error
                             )

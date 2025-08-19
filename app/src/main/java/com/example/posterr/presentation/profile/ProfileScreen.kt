@@ -27,6 +27,8 @@ import com.example.posterr.presentation.common.CreatePostDialog
 import com.example.posterr.presentation.common.PostCard
 import com.example.posterr.presentation.common.QuotePostDialog
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.res.stringResource
+import com.example.posterr.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,7 +45,7 @@ fun ProfileScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Profile") }
+                title = { Text(stringResource(id = R.string.title_profile)) }
             )
         }
     ) { paddingValues ->
@@ -75,7 +77,7 @@ fun ProfileScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No posts yet. Create your first post!",
+                        text = stringResource(id = R.string.profile_empty),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
